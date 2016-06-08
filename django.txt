@@ -1,0 +1,38 @@
+mysql-ctl start  //encencer base de datos
+
+mysql -uroot // entrar a la base de datos
+
+show databases; // mostrar base de datos
+
+		use <nombre>; // usar base de datos
+
+create database {nombre}; // crear base de datos
+
+exit;
+
+//settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'clase11',
+        'USER': 'fortune9316',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    }
+}
+
+sudo pip install MySQL; // instalar modulos
+
+python manage.py migrate
+
+python manage.py createsuperuser 
+
+//listo :)
+
+
+
+python manage.py startapp app_savescore //crear nuevo modulo
+
+python manage.py makemigrations app_savescore // subir todo
