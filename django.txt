@@ -36,3 +36,76 @@ python manage.py createsuperuser
 python manage.py startapp app_savescore //crear nuevo modulo
 
 python manage.py makemigrations app_savescore // subir todo
+
+//models.py -> crear el modelo de la tabla
+
+class Device(models.Model):
+    
+    class Meta:
+        db_table = "app_device"
+    
+    uid = models.TextField(verbose_name=u'Dispositivo',null=False)
+    
+    device_model = models.TextField(verbose_name=u'Modelo',null=False)
+    
+    device_name = models.TextField(verbose_name=u'Nombre',null=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name=u'Fecha de registro')
+
+//admin.py -> Registrar tabla
+
+from app_savescore.models import Device
+
+class DevideAdmin(admin.ModelAdmin):
+    
+    list_display = ('uid','device_model','device_name','created_at')
+    
+    search_fields = ['device_model']
+    
+    list_filter = ('created_at', 'device_model',)
+
+admin.site.register(Device,DevideAdmin)
+
+//views.py
+
+from django.views.generic import View
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from app_savescore.models import Device
+
+class Game(View):
+    
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(Game, self).dispatch(*args, **kwargs)
+    
+    def get(self,request):
+        return HttpResponse("hola")
+        
+    def post(self,request):
+        data = request.POST
+        device = Device.objects.filter(uid=data.get('uid')).first()
+        if not device:
+            device = Device()
+            device.uid = data.get('uid')
+            device.device_model = data.get('device_model')
+            device.device_name = data.get('device_name')
+            device.save()
+        return HttpResponse("hola2")
+
+// urls.py -> de la app
+
+from django.conf.urls import url
+from app_savescore import views
+
+urlpatterns = [
+    url(r'^prueba/',views.Game.as_view(),name='prueba'),
+]
+
+// urls.py de la base
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^',include('app_savescore.urls'))
+]
